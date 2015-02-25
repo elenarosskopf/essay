@@ -28,6 +28,12 @@ final = na.omit(workingdata2)
 ##alright, alles weg was man nicht brauch
 ##nicht plausibele ergebnisse immer noch drin.. 
 
+#remove rows which have NAs (metadata)
+final = na.omit(workingdata2)
+
+#now fill in all NAs from the plausibility check: 
+
+
 search()
 detach(workingdata2)
 attach(final)
@@ -118,7 +124,7 @@ plot(test)
 
 
 #eigentlich brauche ich ja 3 modelle?? 
-#predict anfang, ende und l‰nge? 
+#predict anfang, ende und l√§nge? 
 #dann daten plotten 
 
 test1 <- lme(Period ~ Plot_abb, random=~1|Year_CE, data = final)
