@@ -1,8 +1,6 @@
 #load in results
 Results <- read.csv("~/GitHub/essay/Growth Phenology/Results.csv", sep=";", dec=",")
 
-attach(Results)
-
 #fixed effect will be Plot and tree ID ? 
 
 #random effect will be: Year, groups and/or position
@@ -100,8 +98,15 @@ final$End [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="1997"&final$Plot_abb
 final$Begin [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="1997"& final$Plot_abb=="GUE")] = NA
 final$Period [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="1997"& final$Plot_abb=="GUE")] = NA
 
+#remove 2014 completely
+final$End [which ( final$Year_CE=="2014")] = NA
+final$Begin [which (final$Year_CE=="2014")] = NA
+final$Period [which (final$Year_CE=="2014")] = NA
+
 #end of plausibility check, 
 #all senseless data removed from table
+
+
 
 ######################
 
@@ -111,7 +116,8 @@ final$Period [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="1997"& final$Plot
 
 #######
 #check first differences
-
+library(ggplot2)
+attach(final)
 p <- ggplot(final, aes(factor(Plot_abb), Period))
 b <- ggplot(final, aes(factor(Plot_abb), Begin))
 e <- ggplot(final, aes(factor(Plot_abb), End))
@@ -138,8 +144,8 @@ pm <- ggplot(mixed, aes(factor(Plot_abb), Period))
 bm <- ggplot(mixed, aes(factor(Plot_abb), Begin))
 em <- ggplot(mixed, aes(factor(Plot_abb), End))
 
-library(plyr)
-meds <- ddply(mixed, .(factor(Plot_abb)), summarize, med = round(median(Period ,na.rm = TRUE)))
+#library(plyr)
+#meds <- ddply(mixed, .(factor(Plot_abb)), summarize, med = round(median(Period ,na.rm = TRUE)))
 
 pm + geom_boxplot(aes(fill = factor(Plot_abb)))
 #+  geom_text(data=meds, aes( y=med, label="med", size = 3, vjust = +1))                                                           
@@ -217,4 +223,8 @@ plot(test)
 
 test1 <- lme(Period ~ Plot_abb, random=~1|Year_CE, data = final)
 plot(test1)
+
+##################################
+
+#look for outliers: 
 
