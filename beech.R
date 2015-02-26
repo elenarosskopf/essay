@@ -39,7 +39,7 @@ attach(final)
 final$End [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="2013"&final$Plot_abb=="SIL")] = NA
 final$Period [which (final$Dendro_ID=="FaSy5"& final$Year_CE=="2013"& final$Plot_abb=="SIL")] = NA
 
-final$End [which (final$Dendro_ID=="FaSy6"& final$Year_CE=="2013"& final$Plot_abb=="GUE")] = NA
+final$Begin [which (final$Dendro_ID=="FaSy6"& final$Year_CE=="2013"& final$Plot_abb=="GUE")] = NA
 final$Period [which (final$Dendro_ID=="FaSy6"& final$Year_CE=="2013"& final$Plot_abb=="GUE")] = NA
 
 final$End [which (final$Dendro_ID=="FaSy4"& final$Year_CE=="1997"& final$Plot_abb=="SIL")] = NA
@@ -122,20 +122,40 @@ p <- ggplot(final, aes(factor(Plot_abb), Period))
 b <- ggplot(final, aes(factor(Plot_abb), Begin))
 e <- ggplot(final, aes(factor(Plot_abb), End))
 
-qplot(factor(Plot_abb), Period, data = final, geom = "boxplot") +
-  coord_flip()
-
-qplot(factor(Plot_abb), Begin, data = final, geom = "boxplot") +
-  coord_flip()
-
-qplot(factor(Plot_abb), End, data = final, geom = "boxplot") +
-  coord_flip()
+qplot(factor(Plot_abb), Period, data = final, geom = "boxplot") +coord_flip()
+qplot(factor(Plot_abb), Begin, data = final, geom = "boxplot") +coord_flip()
+qplot(factor(Plot_abb), End, data = final, geom = "boxplot") +coord_flip()
 
 #schickes ding: 
+#farben:
+#  http://www.cookbook-r.com/Graphs/Colors_%28ggplot2%29/
+#  http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+
+
 #Period boxplot with rawdata
-p + geom_boxplot(aes(fill = factor(Plot_abb)))
-e + geom_boxplot(aes(fill = factor(Plot_abb)))
-b + geom_boxplot(aes(fill = factor(Plot_abb)))
+ggsave("periodboxplot.pdf")
+p + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c( "forestgreen","indianred2", "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = " Growth Period")
+
+ggsave("endboxplot.pdf")
+e + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c("forestgreen","indianred2",  "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "End of Growth Period [DOY]",
+       title = "End of  Growth Period")
+
+ggsave("beginboxplot.pdf")
+b + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c("forestgreen", "indianred2", "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Begin of Growth Period [DOY]",
+       title = "Begin of Growth Period")
 
 #nur mixed stand:
 mixed = final[Group=="Mixed_stand",]
@@ -146,11 +166,31 @@ em <- ggplot(mixed, aes(factor(Plot_abb), End))
 
 #library(plyr)
 #meds <- ddply(mixed, .(factor(Plot_abb)), summarize, med = round(median(Period ,na.rm = TRUE)))
+ggsave("periodmixedboxplot.pdf")
+pm + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c("forestgreen", "indianred2", "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = "Growth Period in Mixed Stands")
+#+  geom_text(data=meds, aes( y=med, label="med", size = 3, vjust = +1))  
 
-pm + geom_boxplot(aes(fill = factor(Plot_abb)))
-#+  geom_text(data=meds, aes( y=med, label="med", size = 3, vjust = +1))                                                           
-em + geom_boxplot(aes(fill = factor(Plot_abb)))
-bm + geom_boxplot(aes(fill = factor(Plot_abb)))
+ggsave("endmixedboxplot.pdf")
+em + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c("forestgreen", "indianred2", "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "End of Growth Period [DOY]",
+       title = "Cessation of Growth Period in Mixed Stands")
+
+ggsave("beginmixedboxplot.pdf")
+bm + geom_boxplot(aes(fill = factor(Plot_abb)))+ 
+  scale_fill_manual(values=c("forestgreen", "indianred2", "steelblue2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Begin of Growth Period [DOY]",
+       title = "Begin of Growth Period in Mixed Stands")
+
 ###
 #check other possible differences: 
 
@@ -158,10 +198,46 @@ bm + geom_boxplot(aes(fill = factor(Plot_abb)))
 p + geom_boxplot(aes(fill = factor(Position)))
 
 #2. on grouping:
-p + geom_boxplot(aes(fill = factor(Group)))
+ggsave("buntegroupings.pdf")
+p + geom_boxplot(aes(fill = interaction(Group, Plot_abb))) + 
+  scale_fill_manual(values=c("forestgreen", "indianred2", "steelblue2","tan1", "violetred2" )) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = "Growth Period with different groupings")
+
+ggsave("palegroupings.pdf")
+p + geom_boxplot(aes(fill = interaction(Group, Plot_abb))) + 
+  scale_fill_manual(values=c("palegreen2", "palegreen3", "palegreen4","tan1", "violetred2" )) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = "Growth Period with different groupings")
+
+##focused in SIL: 
+ggsave("buntegroupings.pdf")
+SIL = final[final$Plot_abb =="SIL",]
+pSIL <- ggplot(SIL, aes(factor(Group), Period))
+
+ggsave("SILgrouping_othercolour.pdf")
+pSIL + geom_boxplot(aes(fill = (Group))) + 
+  scale_fill_manual(values=c("forestgreen", "tan1",  "violetred2" )) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = "Growth Period with different groupings")
+
 
 #3. Exposition: 
-p + geom_boxplot(aes(fill = Exposition))
+ggsave("exposition.pdf")
+p + geom_boxplot(aes(fill = Exposition))+ 
+  scale_fill_manual(values=c("steelblue2", "indianred2","palegreen2")) +
+  labs(size= "Nitrogen",
+       x = "Plots",
+       y = "Growth Period [DOY]",
+       title = "Growth Period along different Expositions")
+
+
 #####################
 
 #Data checking for assupmtions
@@ -169,19 +245,28 @@ p + geom_boxplot(aes(fill = Exposition))
 #normal distribution, shapiro p smaller 0.05, dann reject NULL = keine Normalverteilung
 attach(final)
 write.csv(final, file="final.csv")
+
+detach(final)
+attach(mixed)
 par(mfrow=c(1,3))
 qqnorm(Period, main="Period")
 qqline(Period)
-shapiro.test(Period)
+shapiro.test(Period) 
 
 qqnorm(Begin, main="Begin")
 qqline(Begin)
 shapiro.test(Begin)
+#not normally distributed! log transform does not help
+
+qqnorm(log(mixed$Begin))
+qqline(log(mixed$Begin))
+shapiro.test(log(mixed$Begin))
 
 qqnorm(End, main="End")
 qqline(End)
 shapiro.test(End)
 par(mfrow=c(1,1))
+mtext("Mixed Stand Values", side=3, line= 3)
 ######################
 
 #Checking first statistics
@@ -213,7 +298,7 @@ mean_3_end
 #####################
 
 # group trees in to 3 plots 
-test = lmer (Period ~ Plot_abb + (1|Year_CE)+ (1|Dendro_ID))
+test = lmer (Period ~ Plot_abb + (1|Year_CE) + (1|Dendro_ID))
 plot(test)
 
 
@@ -226,5 +311,6 @@ plot(test1)
 
 ##################################
 
-#look for outliers: 
+#look for outliers: done by visualizing and makign a table "outlier"
+
 
