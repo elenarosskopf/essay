@@ -162,6 +162,7 @@ p + geom_boxplot(aes(fill = Exposition))
 
 #normal distribution, shapiro p smaller 0.05, dann reject NULL = keine Normalverteilung
 attach(final)
+write.csv(final, file="final.csv")
 par(mfrow=c(1,3))
 qqnorm(Period, main="Period")
 qqline(Period)
